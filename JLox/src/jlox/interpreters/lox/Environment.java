@@ -16,8 +16,13 @@ public class Environment {
     void define(String name, Object value) {
         values.put(name, value);
     }
-    
-    Object get(Token name) {
+    /**
+     * 
+     * @param name
+     * @return
+     * @throws RuntimeError if variable is undefined
+     */
+    Object get(Token name) throws RuntimeError {
         if (values.containsKey(name.lexeme)) {
             return values.get(name.lexeme);
         }
@@ -26,7 +31,13 @@ public class Environment {
         }
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
     }
-    void assign(Token name, Object value) {
+    /**
+     * 
+     * @param name
+     * @param value
+     * @throws RuntimeError if variable is undefined
+     */
+    void assign(Token name, Object value) throws RuntimeError {
         if (values.containsKey(name.lexeme)) {
             values.put(name.lexeme, value);
             return;
@@ -36,5 +47,22 @@ public class Environment {
             return;
         }
         throw new RuntimeError(name, "Undefined variable '" + name.lexeme + "'.");
+    }
+    
+    Object getAt(int distance, String name) {
+        return ancestor(distance).values.get(name);
+    }
+    
+    Environment ancestor(int distance) {
+        Environment environment = this;
+        for (int i = 0; i < distance; i++) {
+            environment = environment.enclosing;
+        }
+
+        return environment;
+    }
+    public void assignAt(int distance, Token name, Object value) {
+        ancestor(distance).values.put(name.lexeme, value);
+        
     }
 }
