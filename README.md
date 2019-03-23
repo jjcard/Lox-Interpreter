@@ -4,7 +4,7 @@ Interpreter(s) for Lox language as described in Crafting Interpreters by Bob Nys
 Location for output of following Crafting Interpreters.
 
 # JLox
-Java Tree-Walk interpreter for the Lox language. Currently done up to Chapter 10 as well as some of the challanges.
+Java Tree-Walk interpreter for the Lox language. Currently done up to Chapter 11 as well as some of the challanges.
 
 ## Challanges
 * Reverse Polish Notation Vistor for the Syntax Tree.
