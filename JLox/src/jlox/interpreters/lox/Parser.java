@@ -6,6 +6,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
+import jlox.interpreters.lox.Expr.Get;
+
 import static jlox.interpreters.lox.TokenType.*;
 
 class Parser {
@@ -28,13 +30,17 @@ class Parser {
         return statements;
     }
     /**
-     * declaration → funDecl
-            | varDecl
-            | statement ;
+     * declaration → classDecl
+                    | funDecl
+                    | varDecl
+                    | statement ;
      * @return Stmt
      */
     private Stmt declaration() {                
         try {
+            if (match(CLASS)) {
+                return classDeclaration();
+            }
             if (match(FUN)) {
                 return function("function");
             }
@@ -47,14 +53,30 @@ class Parser {
           synchronize();                          
           return null;                            
         }                                         
-      } 
+      }
+
+    /**
+     * classDecl → "class" IDENTIFIER "{" function* "}" ;
+     */
+    private Stmt classDeclaration() {
+        Token name = consume(IDENTIFIER, "Expect class name.");
+        consume(LEFT_BRACE, "Expect '{' before class body.");
+        
+        List<Stmt.Function> methods = new ArrayList<>();
+        while(!check(RIGHT_BRACE) && !isAtEnd()) {
+            methods.add(function("method"));
+        }
+        consume(RIGHT_BRACE, "Expect '}' after class body.");
+        
+        return Stmt.Class.of(name, methods);
+    }
     /**
      * function → IDENTIFIER "(" parameters? ")" block ;
      * @param kind
      * @return
      */
-    private Stmt function(String kind) {
-        Token name = consume(TokenType.IDENTIFIER, "Expect " + kind + " name.");
+    private Stmt.Function function(String kind) {
+        Token name = consume(IDENTIFIER, "Expect " + kind + " name.");
         
         consume(LEFT_PAREN, "Expect '(' after " + kind + " name.");
         
@@ -249,7 +271,7 @@ class Parser {
         } else {
             initializer = null;
         }
-        consume(TokenType.SEMICOLON, "Expect ';' after variable declaration.");
+        consume(SEMICOLON, "Expect ';' after variable declaration.");
         return Stmt.Var.of(name, initializer);
     }
     
@@ -269,13 +291,17 @@ class Parser {
             if (expr instanceof Expr.Variable) {
                 Token name = ((Expr.Variable) expr).name;
                 return Expr.Assign.of(name, value);
+            } else if (expr instanceof Expr.Get) {
+                //assignment with Get syntax means it's really a Expr.Set
+                Expr.Get get = (Get) expr;
+                return Expr.Set.of(get.object, get.name, value);
             }
             error(equals, "Invalid assignment target.");
         }
         return expr;
     }
     /**
-     * logic_or   → logic_and ( "or" logic_and )* ;
+     * logic_or → logic_and ( "or" logic_and )* ;
      */
     private Expr or() {
        Expr expr = and();
@@ -347,7 +373,7 @@ class Parser {
         return call();
     }
     /**
-     * call  → primary ( "(" arguments? ")" )* ;
+     * call → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
      * arguments → expression ( "," expression )* ;
      * @return
      */
@@ -357,6 +383,9 @@ class Parser {
         while (true) {
             if (match(LEFT_PAREN)) {
                 expr = finishCall(expr);
+            } else if (match(DOT)) {
+                Token name = consume (IDENTIFIER, "Expect property name after '.'.");
+                expr = Expr.Get.of(expr, name); 
             } else {
                 break;
             }
@@ -403,6 +432,9 @@ class Parser {
             Expr expr = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");
             return Expr.Grouping.of(expr);
+        }
+        if (match(THIS)) {
+            return Expr.This.of(previous());
         }
         if (match(IDENTIFIER)) {
             return Expr.Variable.of(previous());

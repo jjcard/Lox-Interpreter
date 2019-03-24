@@ -8,15 +8,18 @@ import java.util.Objects;
 
 import jlox.interpreters.lox.Expr.Assign;
 import jlox.interpreters.lox.Expr.Binary;
+import jlox.interpreters.lox.Expr.Get;
 import jlox.interpreters.lox.Expr.Grouping;
 import jlox.interpreters.lox.Expr.Literal;
 import jlox.interpreters.lox.Expr.Logical;
+import jlox.interpreters.lox.Expr.Set;
 import jlox.interpreters.lox.Expr.Unary;
 import jlox.interpreters.lox.Expr.Variable;
 import jlox.interpreters.lox.Propogator.BreakPropogator;
 import jlox.interpreters.lox.Propogator.ContinuePropogator;
 import jlox.interpreters.lox.Stmt.Block;
 import jlox.interpreters.lox.Stmt.Break;
+import jlox.interpreters.lox.Stmt.Class;
 import jlox.interpreters.lox.Stmt.Continue;
 import jlox.interpreters.lox.Stmt.Expression;
 import jlox.interpreters.lox.Stmt.For;
@@ -137,10 +140,10 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     }
     @Override
     public Object visitVariableExpr(Variable expr) {
-        return lookupVariable(expr.name, expr);
+        return lookUpVariable(expr.name, expr);
     }
 
-    private Object lookupVariable(Token name, Expr expr) {
+    private Object lookUpVariable(Token name, Expr expr) {
         Integer distance = locals.get(expr);
         if (distance != null) {
             return environment.getAt(distance, name.lexeme);
@@ -199,6 +202,40 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         
     }
     
+    /**
+     * 1. Evaluate the object.<br>
+     * 2. Raise a runtime error if it’s not an instance of a class.<br>
+     * 3. Evaluate the value.<br>
+     * 
+     * @throws RuntimeError
+     *             if object not a LoxInstance
+     */
+    @Override
+    public Object visitGetExpr(Get expr) throws RuntimeError {
+        Object object = evaluate(expr.object);
+        if (object instanceof LoxInstance) {
+            return ((LoxInstance) object).get(expr.name);
+        }
+        throw new RuntimeError(expr.name, "Only instance have properties.");
+    }
+    
+    @Override
+    public Object visitSetExpr(Set expr) throws RuntimeError {
+        Object object = evaluate(expr.object);
+        
+        if (! (object instanceof LoxInstance)) {
+            throw new RuntimeError(expr.name, "Only instances have fields.");
+        }
+        Object value = evaluate(expr.value);
+        
+        ((LoxInstance) object).set(expr.name, value);
+        
+        return value;
+    }
+    @Override                                    
+    public Object visitThisExpr(Expr.This expr) {
+      return lookUpVariable(expr.keyword, expr); 
+    }
     private void checkNumberOperand(Token operator, Object operand) {
         if (!(operand instanceof Double)) {
             throw new RuntimeError(operator, "Operand must be a number.");
@@ -277,6 +314,23 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         executeBlock(stmt.statements, new Environment(environment));
         return null;
     }
+    
+    @Override
+    public Void visitClassStmt(Class stmt) {
+        environment.define(stmt.name.lexeme, null);
+        Map<String, LoxFunction> methods = new HashMap<>();
+        for (Stmt.Function method: stmt.methods) {
+            LoxFunction function = new LoxFunction(method, environment, method.name.lexeme.equals("init"));
+            methods.put(method.name.lexeme, function);
+        }
+        
+        LoxClass klass = new LoxClass(stmt.name.lexeme, methods);
+        environment.assign(stmt.name, klass);
+        
+        
+        return null;
+    } 
+    
     protected void executeBlock(List<Stmt> statements, Environment environment) {
        final Environment previous = this.environment;
         try {
@@ -357,7 +411,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     
     void resolve(Expr expr, int depth) {
         locals.put(expr, depth);          
-      } 
+      }
 
 
 }

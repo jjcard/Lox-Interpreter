@@ -8,13 +8,17 @@ import java.util.Stack;
 import jlox.interpreters.lox.Expr.Assign;
 import jlox.interpreters.lox.Expr.Binary;
 import jlox.interpreters.lox.Expr.Call;
+import jlox.interpreters.lox.Expr.Get;
 import jlox.interpreters.lox.Expr.Grouping;
 import jlox.interpreters.lox.Expr.Literal;
 import jlox.interpreters.lox.Expr.Logical;
+import jlox.interpreters.lox.Expr.Set;
+import jlox.interpreters.lox.Expr.This;
 import jlox.interpreters.lox.Expr.Unary;
 import jlox.interpreters.lox.Expr.Variable;
 import jlox.interpreters.lox.Stmt.Block;
 import jlox.interpreters.lox.Stmt.Break;
+import jlox.interpreters.lox.Stmt.Class;
 import jlox.interpreters.lox.Stmt.Continue;
 import jlox.interpreters.lox.Stmt.Expression;
 import jlox.interpreters.lox.Stmt.For;
@@ -34,15 +38,20 @@ import jlox.interpreters.lox.Stmt.While;
 public class Resolver implements Expr.Visitor<Void>,  Stmt.Visitor<Void> {
     private enum FunctionType{
         NONE,
-        FUNCTION;
+        FUNCTION,
+        INITIALIZER,
+        METHOD;
     }
-    
+    private enum ClassType {
+        NONE,
+        CLASS;
+    }
     private final Interpreter interpreter;
     /** Stack of Maps, where Key is variable name, value is if it was initialized.*/
     private final Stack<Map<String, Boolean>> scopes = new Stack<>();
     
     private FunctionType currentFunction = FunctionType.NONE;
-
+    private ClassType currentClass = ClassType.NONE;
 
     Resolver(Interpreter interpreter) {                             
       this.interpreter = interpreter;                               
@@ -128,6 +137,9 @@ public class Resolver implements Expr.Visitor<Void>,  Stmt.Visitor<Void> {
         }
         
         if (stmt.value != null) {
+            if (currentFunction == FunctionType.INITIALIZER) {
+                Lox.error(stmt.keyword, "Cannot return a value from an initializer.");
+            }
             resolve(stmt.value);
         }
         return null;
@@ -257,6 +269,50 @@ public class Resolver implements Expr.Visitor<Void>,  Stmt.Visitor<Void> {
         }
 
         // Not found. Assume it is global.
+    }
 
+    @Override
+    public Void visitClassStmt(Class stmt) {
+        ClassType enclosingClass = currentClass;
+        currentClass = ClassType.CLASS;
+        declare(stmt.name);
+        define(stmt.name);
+        
+        beginScope();
+        scopes.peek().put("this", true);
+        
+        for (Stmt.Function method: stmt.methods) {
+            FunctionType declaration = FunctionType.METHOD;
+            if (method.name.lexeme.equals("init")) {
+                declaration = FunctionType.INITIALIZER;
+            }
+            resolveFunction(method, declaration);
+        }
+        endScope();
+        currentClass = enclosingClass;
+        return null;
+    }
+
+    @Override
+    public Void visitGetExpr(Get expr) {
+        resolve(expr.object);
+        return null;
+    }
+
+    @Override
+    public Void visitSetExpr(Set expr) {
+        resolve(expr.value);
+        resolve(expr.object);
+        return null;
+    }
+
+    @Override
+    public Void visitThisExpr(This expr) {
+        if (currentClass == ClassType.NONE) {
+            Lox.error(expr.keyword, "Cannot use 'this' outside of a class.");
+            return null;
+        }
+        resolveLocal(expr, expr.keyword);
+        return null;
     }
 }

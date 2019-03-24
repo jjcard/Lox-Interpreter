@@ -2,7 +2,10 @@ package jlox.interpreters.lox;
 
 import jlox.interpreters.lox.Expr.Assign;
 import jlox.interpreters.lox.Expr.Call;
+import jlox.interpreters.lox.Expr.Get;
 import jlox.interpreters.lox.Expr.Logical;
+import jlox.interpreters.lox.Expr.Set;
+import jlox.interpreters.lox.Expr.This;
 import jlox.interpreters.lox.Expr.Variable;
 
 public class AstPolishPrinter implements Expr.Visitor<String> {
@@ -75,6 +78,23 @@ public class AstPolishPrinter implements Expr.Visitor<String> {
 
     @Override
     public String visitCallExpr(Call expr) {
+        //TODO double-check this
+       return "( call " + expr.callee.accept(this) + ")";
+    }
+
+    @Override
+    public String visitGetExpr(Get expr) {
+        return "( get" + expr.name + ")";
+    }
+
+    @Override
+    public String visitSetExpr(Set expr) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String visitThisExpr(This expr) {
         // TODO Auto-generated method stub
         return null;
     }
