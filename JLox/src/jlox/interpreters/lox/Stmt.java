@@ -32,11 +32,12 @@ abstract class Stmt {
     final List<Stmt> statements;
   }
   static class Class extends Stmt {
-    static Class of(Token name, List<Stmt.Function> methods) {
-      return new Class(name,methods);
+    static Class of(Token name, Expr.Variable superclass, List<Stmt.Function> methods) {
+      return new Class(name,superclass,methods);
     }
-    Class(Token name, List<Stmt.Function> methods) {
+    Class(Token name, Expr.Variable superclass, List<Stmt.Function> methods) {
       this.name = name;
+      this.superclass = superclass;
       this.methods = methods;
     }
 
@@ -45,6 +46,7 @@ abstract class Stmt {
     }
 
     final Token name;
+    final Expr.Variable superclass;
     final List<Stmt.Function> methods;
   }
   static class Expression extends Stmt {

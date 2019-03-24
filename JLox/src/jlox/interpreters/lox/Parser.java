@@ -56,10 +56,18 @@ class Parser {
       }
 
     /**
-     * classDecl → "class" IDENTIFIER "{" function* "}" ;
+     * classDecl → "class" IDENTIFIER ( "<" IDENTIFIER )?
+            "{" function* "}" ;
      */
     private Stmt classDeclaration() {
         Token name = consume(IDENTIFIER, "Expect class name.");
+        
+        Expr.Variable superclass = null;
+        if (match(LESS)) {
+            consume(TokenType.IDENTIFIER, "Expect superclass name.");
+            superclass = Expr.Variable.of(previous());
+        }
+        
         consume(LEFT_BRACE, "Expect '{' before class body.");
         
         List<Stmt.Function> methods = new ArrayList<>();
@@ -68,7 +76,7 @@ class Parser {
         }
         consume(RIGHT_BRACE, "Expect '}' after class body.");
         
-        return Stmt.Class.of(name, methods);
+        return Stmt.Class.of(name, superclass, methods);
     }
     /**
      * function → IDENTIFIER "(" parameters? ")" block ;
@@ -411,8 +419,9 @@ class Parser {
         return new Expr.Call(callee, paren, arguments);
     }
     /**
-     * primary → NUMBER | STRING | "false" | "true" | "nil"
-        | "(" expression ")" ;
+     * primary → "true" | "false" | "nil" | "this"
+        | NUMBER | STRING | IDENTIFIER | "(" expression ")"
+        | "super" "." IDENTIFIER ;
      * @return
      */
     private Expr primary() {
@@ -432,6 +441,12 @@ class Parser {
             Expr expr = expression();
             consume(RIGHT_PAREN, "Expect ')' after expression.");
             return Expr.Grouping.of(expr);
+        }
+        if (match(SUPER)) {
+            Token keyword = previous();
+            consume(DOT, "Expect '.' after 'super'.");
+            Token method = consume(IDENTIFIER, "Expect superclass method name.");
+            return Expr.Super.of(keyword, method);
         }
         if (match(THIS)) {
             return Expr.This.of(previous());

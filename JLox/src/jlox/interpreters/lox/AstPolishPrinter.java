@@ -5,6 +5,7 @@ import jlox.interpreters.lox.Expr.Call;
 import jlox.interpreters.lox.Expr.Get;
 import jlox.interpreters.lox.Expr.Logical;
 import jlox.interpreters.lox.Expr.Set;
+import jlox.interpreters.lox.Expr.Super;
 import jlox.interpreters.lox.Expr.This;
 import jlox.interpreters.lox.Expr.Variable;
 
@@ -95,6 +96,12 @@ public class AstPolishPrinter implements Expr.Visitor<String> {
 
     @Override
     public String visitThisExpr(This expr) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public String visitSuperExpr(Super expr) {
         // TODO Auto-generated method stub
         return null;
     }
