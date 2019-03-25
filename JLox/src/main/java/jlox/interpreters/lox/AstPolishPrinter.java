@@ -10,18 +10,6 @@ import jlox.interpreters.lox.Expr.This;
 import jlox.interpreters.lox.Expr.Variable;
 
 public class AstPolishPrinter implements Expr.Visitor<String> {
-
-    public static void main(String[] args) {
-
-        Token plus = new Token(TokenType.PLUS, "+", null, 1);
-        Token minus = new Token(TokenType.MINUS, "-", null, 1);
-        Token multiply = new Token(TokenType.STAR, "*", null, 1);
-        Expr expression = new Expr.Binary(
-                new Expr.Grouping(Expr.Binary.of(new Expr.Literal(1), plus, new Expr.Literal(2))), multiply,
-                new Expr.Grouping(new Expr.Binary(new Expr.Literal(4), minus, new Expr.Literal(3))));
-
-        System.out.println(new AstPolishPrinter().print(expression));
-    }  
     
     String print(Expr expr) {
         return expr.accept(this);
