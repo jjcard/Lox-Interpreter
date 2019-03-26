@@ -2,28 +2,11 @@ package jlox.interpreters.lox;
 
 import static jlox.interpreters.lox.LoxTestUtil.assertLineEquals;
 import static jlox.interpreters.lox.LoxTestUtil.assertLinesEquals;
-import java.io.IOException;
 
-import org.junit.Ignore;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-class ClassTest {
-
-    @BeforeAll
-    public static void beforeClass() throws IOException {
-        LoxTestUtil.beforeClass();
-    }
-    @AfterEach
-    public void after() {
-        LoxTestUtil.afterEach();
-    }
-    @AfterAll
-    public static void afterClass() throws IOException {
-        LoxTestUtil.afterClass();
-    }
+class ClassTest extends BaseLoxTest {
 
     @Test
     void functionTest() {
@@ -72,7 +55,7 @@ class ClassTest {
         
     }
     
-  @Ignore("Need to figure out why this is printing it 3 times")
+    @Disabled("Need to figure out why this is printing it 3 times")
     @Test
     public void initTest2() {
         String loxCode = "class Foo {\r\n" + 

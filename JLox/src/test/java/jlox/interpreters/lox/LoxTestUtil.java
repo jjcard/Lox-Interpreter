@@ -46,7 +46,7 @@ public class LoxTestUtil {
     }
     public static void assertLinesEquals(String... expected) {
         String output = testOut.toString();
-        String expectedCombined = String.join(NEW_LINE, expected);
+        String expectedCombined = String.join(NEW_LINE, expected) + NEW_LINE;
         assertEquals(expectedCombined, output);
 
     }

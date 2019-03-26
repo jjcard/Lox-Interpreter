@@ -4,25 +4,9 @@ import static jlox.interpreters.lox.LoxTestUtil.assertLineEquals;
 
 import java.io.IOException;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-class PrintTest {
-    
-    @BeforeAll
-    public static void beforeClass() throws IOException {
-        LoxTestUtil.beforeClass();
-    }
-    @AfterEach
-    public void after() {
-        LoxTestUtil.afterEach();
-    }
-    @AfterAll
-    public static void afterClass() throws IOException {
-        LoxTestUtil.afterClass();
-    }
+class PrintTest extends BaseLoxTest {
     
     @Test
     void printString() throws IOException {
