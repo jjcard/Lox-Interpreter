@@ -3,7 +3,6 @@ package jlox.interpreters.lox;
 import static jlox.interpreters.lox.LoxTestUtil.assertLineEquals;
 import static jlox.interpreters.lox.LoxTestUtil.assertLinesEquals;
 
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class ClassTest extends BaseLoxTest {
