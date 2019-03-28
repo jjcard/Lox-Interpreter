@@ -16,6 +16,7 @@ public class Lox {
     private static PrintStream out = System.out;
     private static PrintStream err = System.err;
     
+    
     private static final Interpreter interpreter = new Interpreter();
     public static void main(String[] args) throws IOException {
         if (args.length > 1) {
@@ -28,7 +29,12 @@ public class Lox {
         }
 
     }
-
+    protected static void setOut(PrintStream stream) {
+        out = stream;
+    }
+    protected static void setErr(PrintStream stream) {
+        err = stream;
+    }
     private static void runPrompt() throws IOException {
         final InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);

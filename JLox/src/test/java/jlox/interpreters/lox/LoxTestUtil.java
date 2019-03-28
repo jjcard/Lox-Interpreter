@@ -8,32 +8,24 @@ import java.io.PrintStream;
 
 public class LoxTestUtil {
     private static String NEW_LINE = System.getProperty("line.separator");
-    private static PrintStream defaultOut;
-    private static PrintStream defaultErrorOut;
+
     
     private static ByteArrayOutputStream testOut;
     private static ByteArrayOutputStream testErrorOut;
     
     
     public static void beforeClass() throws IOException {
-        defaultOut = System.out;
-        defaultErrorOut = System.err;
         
         testOut = new ByteArrayOutputStream();
         testErrorOut = new ByteArrayOutputStream();
-        System.setOut(new PrintStream(testOut));
-        System.setErr(new PrintStream(testErrorOut));
+        Lox.setOut(new PrintStream(testOut));
+        Lox.setErr(new PrintStream(testErrorOut));
         
     }
     
     public static void afterEach() {
         testOut.reset();
         testErrorOut.reset();
-    }
-    
-    public static void afterClass() throws IOException {
-        System.setOut(defaultOut);
-        System.setErr(defaultErrorOut);
     }
     
     public static void assertHasNoErrors() {
