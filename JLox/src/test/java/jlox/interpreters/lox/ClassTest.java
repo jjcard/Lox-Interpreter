@@ -52,10 +52,8 @@ class ClassTest extends BaseLoxTest {
         
         LoxTestUtil.assertHasNoErrors();
         assertLineEquals("Foo instance");
-        
     }
     
-    @Disabled("Need to figure out why this is printing it 3 times")
     @Test
     public void initTest2() {
         String loxCode = "class Foo {\r\n" + 
@@ -69,8 +67,7 @@ class ClassTest extends BaseLoxTest {
         Lox.run(loxCode);
         
         LoxTestUtil.assertHasNoErrors();
-        assertLinesEquals("Foo instance", "Foo instance");
-        
+        assertLinesEquals("Foo instance", "Foo instance", "Foo instance");
     }
 
 }
