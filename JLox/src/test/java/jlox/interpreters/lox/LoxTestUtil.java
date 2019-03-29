@@ -40,6 +40,21 @@ public class LoxTestUtil {
         String output = testOut.toString();
         String expectedCombined = String.join(NEW_LINE, expected) + NEW_LINE;
         assertEquals(expectedCombined, output);
-
+    }
+    
+    public static void assertErrorLineEquals(String expected) {
+        String output = testErrorOut.toString();
+        assertEquals(expected +NEW_LINE, output);
+    }
+    public static void assertErrorMessageEquals(String message, final int line) {
+        assertErrorMessageEquals(message, line, "");
+    }
+    public static void assertErrorMessageEquals(String message, final int line, final String where) {
+        String output = testErrorOut.toString();
+        assertEquals("[line " + line + "] Error" + where + ": " + message +NEW_LINE, output);
+    }
+    public static void assertRuntimeError(String message, final int line) {
+        String output = testErrorOut.toString();
+        assertEquals(message + "\n[line " + line + "]" + NEW_LINE, output);
     }
 }

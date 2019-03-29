@@ -65,4 +65,20 @@ public class LoopTest extends BaseLoxTest {
         LoxTestUtil.assertHasNoErrors();
         assertLinesEquals("0", "1", "2", "3", "5", "7");
     }
+    
+    @Test
+    public void breakStatmentOutsideLoop() {
+        final String loxCode = "var a = \"yes\";\r\n" + 
+                "break;";
+        Lox.run(loxCode);
+        LoxTestUtil.assertErrorMessageEquals("Break statement must be inside a loop.", 2, " at 'break'");
+    }
+    @Test
+    public void continueStatmentOutsideLoop() {
+        final String loxCode = "var a = \"yes\";\r\n" + 
+                "var b = a;\r\n" + 
+                "continue;";
+        Lox.run(loxCode);
+        LoxTestUtil.assertErrorMessageEquals("Continue statement must be inside a loop.", 3, " at 'continue'");
+    }
 }
