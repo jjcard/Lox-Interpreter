@@ -3,6 +3,7 @@ package jlox.interpreters.lox;
 import static jlox.interpreters.lox.LoxTestUtil.assertLineEquals;
 import static jlox.interpreters.lox.LoxTestUtil.assertLinesEquals;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 class ClassTest extends BaseLoxTest {
@@ -67,6 +68,23 @@ class ClassTest extends BaseLoxTest {
         
         LoxTestUtil.assertHasNoErrors();
         assertLinesEquals("Foo instance", "Foo instance", "Foo instance");
+    }
+    
+    @Disabled("test for static methods, if implemented")
+    @Test
+    public void staticMethodTest() {
+        String loxCode = "class Math {\r\n" + 
+                "  class square(n) {\r\n" + 
+                "    return n * n;\r\n" + 
+                "  }\r\n" + 
+                "}\r\n" + 
+                "\r\n" + 
+                "print Math.square(3);.";
+        
+        Lox.run(loxCode);
+        LoxTestUtil.assertHasNoErrors();
+        assertLineEquals("9");
+        
     }
 
 }

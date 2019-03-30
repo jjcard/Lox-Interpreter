@@ -298,7 +298,7 @@ public class Resolver implements Expr.Visitor<Void>,  Stmt.Visitor<Void> {
         
         for (Stmt.Function method: stmt.methods) {
             FunctionType declaration = FunctionType.METHOD;
-            if (method.name.lexeme.equals("init")) {
+            if (LoxClass.isInitializer(method)) {
                 declaration = FunctionType.INITIALIZER;
             }
             resolveFunction(method, declaration);
