@@ -8,7 +8,7 @@ import java.util.Map;
  *
  */
 public class LoxInstance {
-    
+    /** class this is an instance of*/
     private final LoxClass klass;
     private final Map<String, Object> fields = new HashMap<>();
     

@@ -28,7 +28,8 @@ public class LoxScanner {
         KEYWORDS.put("var",    VAR);                       
         KEYWORDS.put("while",  WHILE);
         KEYWORDS.put("break",  BREAK); 
-        KEYWORDS.put("continue", CONTINUE); 
+        KEYWORDS.put("continue", CONTINUE);
+        KEYWORDS.put("import", IMPORT);
     }
     
     private final String source;                                            
@@ -64,7 +65,15 @@ public class LoxScanner {
           case ',': addToken(COMMA); break;          
           case '.': addToken(DOT); break;            
           case '-': addToken(MINUS); break;          
-          case '+': addToken(PLUS); break;           
+          case '+':
+                if (match('+')) {
+                    addToken(PLUS_PLUS);
+                } else if (match('=')) {
+                    addToken(PLUS_EQUAL);
+                } else {
+                    addToken(PLUS);
+                }
+              break;           
           case ';': addToken(SEMICOLON); break;
           case '*': addToken(STAR); break;
           case '!': addToken(match('=') ? BANG_EQUAL : BANG); break;      
@@ -132,12 +141,8 @@ public class LoxScanner {
             advance();
         }
         final String text = source.substring(start, current);
-        TokenType type = KEYWORDS.get(text);
-        if (type == null) {
-            type = TokenType.IDENTIFIER;
-        }
+        final TokenType type = KEYWORDS.getOrDefault(text, IDENTIFIER);
         addToken(type);
-        
     }
 
     private void number() {

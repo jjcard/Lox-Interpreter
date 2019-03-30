@@ -14,15 +14,16 @@ public enum TokenType {
     EQUAL,
     /**==*/
     EQUAL_EQUAL,
-    GREATER, GREATER_EQUAL,                          
-    LESS, LESS_EQUAL,                                
-
+    GREATER, GREATER_EQUAL,     
+    LESS, LESS_EQUAL,          
+    PLUS_PLUS, PLUS_EQUAL,
     // Literals.                                     
     IDENTIFIER, STRING, NUMBER,                      
 
     // Keywords.                                     
-    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR,  
+    AND, CLASS, ELSE, FALSE, FUN, FOR, IF, NIL, OR, 
     PRINT, RETURN, SUPER, THIS, TRUE, VAR, WHILE, BREAK, CONTINUE,
+    IMPORT,
     
     //RESERVED Because NO!
     GOTO,
