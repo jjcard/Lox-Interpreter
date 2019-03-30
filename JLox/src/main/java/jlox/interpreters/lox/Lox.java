@@ -29,6 +29,11 @@ public class Lox {
         }
 
     }
+    
+    protected static void clearState() {
+        hadError = false;
+        hadRuntimeError = false;
+    }
     protected static void setOut(PrintStream stream) {
         out = stream;
     }

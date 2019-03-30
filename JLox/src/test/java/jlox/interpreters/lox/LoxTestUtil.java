@@ -26,6 +26,7 @@ public class LoxTestUtil {
     public static void afterEach() {
         testOut.reset();
         testErrorOut.reset();
+        Lox.clearState();
     }
     
     public static void assertHasNoErrors() {

@@ -17,7 +17,7 @@ class FunctionTest extends BaseLoxTest {
     }
 
     @Test
-    public void methodCalledWithTooManyArguments() {
+    public void functionCalledWithTooManyArguments() {
         final String loxCode = "fun oneArg(one){\r\n" + 
                 "    print one;\r\n" + 
                 "}\r\n" + 

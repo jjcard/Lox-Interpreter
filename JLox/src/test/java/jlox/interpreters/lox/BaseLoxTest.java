@@ -9,6 +9,7 @@ class BaseLoxTest {
 
     @BeforeAll
     public static void beforeClass() throws IOException {
+        Lox.clearState();
         LoxTestUtil.beforeClass();
     }
     @AfterEach
