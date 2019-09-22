@@ -15,7 +15,7 @@ public class LoxTestUtil {
     
     
     public static void beforeClass() throws IOException {
-        
+        Lox.setTestingMode(true);
         testOut = new ByteArrayOutputStream();
         testErrorOut = new ByteArrayOutputStream();
         Lox.setOut(new PrintStream(testOut));
@@ -35,7 +35,10 @@ public class LoxTestUtil {
     public static void assertLineEquals(String expected) {
         String output = testOut.toString();
         assertEquals(expected +NEW_LINE, output);
-
+    }
+    public static void assertNoLines() {
+        String output = testOut.toString();
+        assertEquals("", output);
     }
     public static void assertLinesEquals(String... expected) {
         String output = testOut.toString();

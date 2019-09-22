@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeAll;
 
 class BaseLoxTest {
 
+    public static final String TEST_FILE_DIR = "../test/";
     @BeforeAll
     public static void beforeClass() throws IOException {
         Lox.clearState();

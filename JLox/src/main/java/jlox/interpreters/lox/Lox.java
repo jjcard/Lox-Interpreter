@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.List;
 
 public class Lox {
+    private static boolean testingMode = false;
     private static boolean hadError = false;
     private static boolean hadRuntimeError = false;
 
@@ -40,6 +41,13 @@ public class Lox {
     protected static void setErr(PrintStream stream) {
         err = stream;
     }
+    /**
+     * Turn on/off testing mode. Testing mode on means will not System exit with error code if unable to parse.
+     * @param testingMode
+     */
+    protected static void setTestingMode(boolean testingMode) {
+        Lox.testingMode = testingMode;
+    }
     private static void runPrompt() throws IOException {
         final InputStreamReader input = new InputStreamReader(System.in);
         BufferedReader reader = new BufferedReader(input);
@@ -53,17 +61,17 @@ public class Lox {
     }
 
     protected static void run(String source) {
-        LoxScanner scanner = new LoxScanner(source);
-        List<Token> tokens = scanner.scanTokens();
+        final LoxScanner scanner = new LoxScanner(source);
+        final List<Token> tokens = scanner.scanTokens();
 
-        Parser parser = new Parser(tokens);
-        List<Stmt> statements = parser.parse();
+        final Parser parser = new Parser(tokens);
+        final List<Stmt> statements = parser.parse();
         //stop if there was a syntax error
         if (hadError) {
             return;
         }
         
-        Resolver resolver = new Resolver(interpreter);
+        final Resolver resolver = new Resolver(interpreter);
         resolver.resolve(statements);
         
         //Stop if there was a resolution error
@@ -75,16 +83,20 @@ public class Lox {
         
     }
 
-    private static void runFile(final String path) throws IOException {
-        byte[] bytes = Files.readAllBytes(Paths.get(path));
+    protected static void runFile(final String path) throws IOException {
+        final byte[] bytes = Files.readAllBytes(Paths.get(path));
         run(new String(bytes, Charset.defaultCharset()));
-        // Indicate an error in the exit code.
-        if (hadError) {
-            System.exit(65);
+        
+        if (!testingMode) {
+            // Indicate an error in the exit code.
+            if (hadError) {
+                System.exit(65);
+            }
+            if (hadRuntimeError) {
+                System.exit(79);
+            }
         }
-        if (hadRuntimeError) {
-            System.exit(79);
-        }
+
     }
     static void error(int line, String message) {
         report(line, "", message);
