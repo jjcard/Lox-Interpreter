@@ -26,9 +26,7 @@ class StringTest extends BaseLoxTest {
     void multiline() throws IOException {
         Lox.runFile(STRING_TEST_FILE_DIR + "multiline.lox");
         LoxTestUtil.assertHasNoErrors();
-        assertLinesEquals("1\n" + 
-                "2\n" + 
-                "3");
+        assertLinesEquals("1","2","3");
     }
     
     @Test

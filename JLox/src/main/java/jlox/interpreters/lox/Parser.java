@@ -402,7 +402,7 @@ class Parser {
     }
     /**
      * arguments → expression ( "," expression )* ;
-     * @param expr
+     * @param callee
      * @return
      */
     private Expr finishCall(Expr callee) {

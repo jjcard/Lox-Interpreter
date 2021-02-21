@@ -7,14 +7,14 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 public class LoxTestUtil {
-    private static String NEW_LINE = System.getProperty("line.separator");
+    private static final String NEW_LINE = System.getProperty("line.separator");
 
     
     private static ByteArrayOutputStream testOut;
     private static ByteArrayOutputStream testErrorOut;
     
     
-    public static void beforeClass() throws IOException {
+    public static void beforeClass() {
         Lox.setTestingMode(true);
         testOut = new ByteArrayOutputStream();
         testErrorOut = new ByteArrayOutputStream();
