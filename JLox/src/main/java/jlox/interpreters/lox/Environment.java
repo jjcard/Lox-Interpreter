@@ -18,8 +18,8 @@ public class Environment {
     }
     /**
      * 
-     * @param name
-     * @return
+     * @param name Token
+     * @return value in Environment or enclosing environments
      * @throws RuntimeError if variable is undefined
      */
     Object get(Token name) throws RuntimeError {
@@ -53,7 +53,7 @@ public class Environment {
         return ancestor(distance).values.get(name);
     }
     
-    Environment ancestor(int distance) {
+    private Environment ancestor(final int distance) {
         Environment environment = this;
         for (int i = 0; i < distance; i++) {
             environment = environment.enclosing;

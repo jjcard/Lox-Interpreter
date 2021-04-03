@@ -16,8 +16,8 @@ import jlox.interpreters.lox.Expr.Set;
 import jlox.interpreters.lox.Expr.Super;
 import jlox.interpreters.lox.Expr.Unary;
 import jlox.interpreters.lox.Expr.Variable;
-import jlox.interpreters.lox.Propogator.BreakPropogator;
-import jlox.interpreters.lox.Propogator.ContinuePropogator;
+import jlox.interpreters.lox.Propagator.BreakPropagator;
+import jlox.interpreters.lox.Propagator.ContinuePropagator;
 import jlox.interpreters.lox.Stmt.Block;
 import jlox.interpreters.lox.Stmt.Break;
 import jlox.interpreters.lox.Stmt.Class;
@@ -396,9 +396,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         while(isTruthy(evaluate(stmt.condition))) {
             try {
                 execute(stmt.body);
-            } catch (ContinuePropogator e) {
+            } catch (ContinuePropagator e) {
                 //continue
-            } catch (BreakPropogator e) {
+            } catch (BreakPropagator e) {
                 break;
             }
         }
@@ -410,9 +410,9 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         while(isTruthy(evaluate(stmt.condition))) {
             try {
                 execute(stmt.body);
-            } catch (ContinuePropogator e) {
+            } catch (ContinuePropagator e) {
                 //continue
-            } catch (BreakPropogator e) {
+            } catch (BreakPropagator e) {
                 break;
             }
             if (stmt.increment != null) {
@@ -435,15 +435,15 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         if (stmt.value != null) {
             value = evaluate(stmt.value);
         }
-        throw new Propogator.ReturnPropogator(value);
+        throw new Propagator.ReturnPropagator(value);
     }
     @Override
     public Void visitBreakStmt(Break stmt) {
-        throw new Propogator.BreakPropogator();
+        throw new BreakPropagator();
     }
     @Override
     public Void visitContinueStmt(Continue stmt) {
-        throw new Propogator.ContinuePropogator();
+        throw new ContinuePropagator();
     }
 
     void resolve(Expr expr, int depth) {

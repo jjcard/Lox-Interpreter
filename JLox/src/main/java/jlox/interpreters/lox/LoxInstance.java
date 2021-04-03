@@ -15,7 +15,13 @@ public class LoxInstance {
     public LoxInstance(LoxClass klass) {
         this.klass = klass;
     }
-    
+
+    /**
+     *
+     * @param name Token
+     * @return field or bound method for Token
+     * @throws RuntimeError if not found
+     */
     Object get(Token name) throws RuntimeError {
         if (fields.containsKey(name.lexeme)) {
             return fields.get(name.lexeme);
