@@ -2,7 +2,7 @@ package jlox.interpreters.lox;
 
 import java.util.List;
 
-import jlox.interpreters.lox.Propogator.ReturnPropogator;
+import jlox.interpreters.lox.Propagator.ReturnPropagator;
 
 /**
  * Runtime wrapper for Stmt.Function that implements LoxCallable
@@ -31,7 +31,7 @@ public class LoxFunction implements LoxCallable {
         }
         try {
             interpreter.executeBlock(declaration.body, environment);
-        } catch (ReturnPropogator returnValue) {
+        } catch (ReturnPropagator returnValue) {
             if (isInitializer) {
                 assert returnValue.value == null: "explicit return value should always be nil for initializers";
                 //Forcibly return 'this' for initializer method
@@ -54,6 +54,7 @@ public class LoxFunction implements LoxCallable {
     public String toString() {
       return "<fn " + declaration.name.lexeme + ">";
     }
+
     public LoxFunction bind(LoxInstance instance) {
         Environment environment = new Environment(closure);
         environment.define("this", instance);

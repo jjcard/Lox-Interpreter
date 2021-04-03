@@ -5,7 +5,9 @@ import java.util.Map;
 
 import jlox.interpreters.lox.Stmt.Function;
 
-public class LoxClass implements LoxCallable{
+public class LoxClass implements LoxCallable {
+    /** special name for the initializer method*/
+    private static final String INIT_METHOD_NAME = "init";
     final String name;
     final LoxClass superclass;
     private final Map<String, LoxFunction> methods;
@@ -23,9 +25,9 @@ public class LoxClass implements LoxCallable{
     @Override
     public Object call(Interpreter interpreter, List<Object> arguments) {
         LoxInstance instance = new LoxInstance(this);
-        LoxFunction initilizer = getInitializer();
-        if (initilizer != null) {
-            initilizer.bind(instance).call(interpreter, arguments);
+        LoxFunction initializer = getInitializer();
+        if (initializer != null) {
+            initializer.bind(instance).call(interpreter, arguments);
         }
         return instance;
     }
@@ -41,7 +43,7 @@ public class LoxClass implements LoxCallable{
     }
 
     private LoxFunction getInitializer() {
-        return methods.get("init");
+        return methods.get(INIT_METHOD_NAME);
     }
 
     public LoxFunction findMethod(String name) {
@@ -53,8 +55,8 @@ public class LoxClass implements LoxCallable{
         }
         return null;
     }
-    public static boolean isInitializer(Function funcition) {
-        return funcition != null && "init".equals(funcition.name.lexeme);
+    public static boolean isInitializer(Function function) {
+        return function != null && INIT_METHOD_NAME.equals(function.name.lexeme);
     }
 
 }

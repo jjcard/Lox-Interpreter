@@ -3,6 +3,10 @@ package jlox.interpreters.lox;
 import java.util.List;
 
 abstract class Stmt {
+  /**
+   * Visitor pattern to visit every statement type
+   * @param <R>
+   */
   interface Visitor<R> {
     R visitBlockStmt(Block stmt);
     R visitClassStmt(Class stmt);

@@ -16,8 +16,8 @@ import jlox.interpreters.lox.Expr.Set;
 import jlox.interpreters.lox.Expr.Super;
 import jlox.interpreters.lox.Expr.Unary;
 import jlox.interpreters.lox.Expr.Variable;
-import jlox.interpreters.lox.Propogator.BreakPropogator;
-import jlox.interpreters.lox.Propogator.ContinuePropogator;
+import jlox.interpreters.lox.Propagator.BreakPropagator;
+import jlox.interpreters.lox.Propagator.ContinuePropagator;
 import jlox.interpreters.lox.Stmt.Block;
 import jlox.interpreters.lox.Stmt.Break;
 import jlox.interpreters.lox.Stmt.Class;
@@ -39,34 +39,34 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
      * where the interpreter can find the variable's value
      */
     private final Map<Expr, Integer> locals = new HashMap<>();
-    
-    
-    
+
+
+
     public Interpreter() {
         globals.define("clock", new LoxCallable() {
-            
+
             @Override
             public Object call(Interpreter interpreter, List<Object> arguments) {
                 return (double) System.currentTimeMillis()/1000.0;
             }
-            
+
             @Override
             public int arity() {
                 return 0;
             }
-            @Override                                            
-            public String toString() { return "<native fn>"; } 
+            @Override
+            public String toString() { return "<native fn>"; }
         });
     }
     void interpret(List<Stmt> statements) {
         try {
-           for (Stmt statement: statements) {
-               execute(statement);
-           }
+            for (Stmt statement: statements) {
+                execute(statement);
+            }
         } catch (RuntimeError e) {
             Lox.runtimeError(e);
         }
-        
+
     }
     @SuppressWarnings("incomplete-switch")
     @Override
@@ -130,13 +130,13 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
     public Object visitUnaryExpr(Unary expr) {
         final Object right = evaluate(expr.right);
         switch(expr.operator.type) {
-        case BANG:
-            return !isTruthy(right);
-        case MINUS:
-            checkNumberOperand(expr.operator, right);
-            return -(double) right;
+            case BANG:
+                return !isTruthy(right);
+            case MINUS:
+                checkNumberOperand(expr.operator, right);
+                return -(double) right;
         }
-        
+
         return null;
     }
     @Override
@@ -165,27 +165,27 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         }
         return value;
     }
-    
+
     @Override
     public Object visitLogicalExpr(Logical expr) {
         final Object left = evaluate(expr.left);
         if (expr.operator.type == TokenType.OR) {
             if (isTruthy(left)) {
                 return left;
-            } 
+            }
         } else {
             //AND
             if (!isTruthy(left)) {
                 return left;
             }
         }
-        
+
         return evaluate(expr.right);
     }
-    
+
     public Object visitCallExpr(Expr.Call expr) {
         Object callee = evaluate(expr.callee);
-        
+
         final List<Object> arguments = new ArrayList<>();
         for (Expr argument: expr.arguments) {
             arguments.add(evaluate(argument));
@@ -194,20 +194,20 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
             throw new RuntimeError(expr.paren, "Can only call functions and classes.");
         }
         LoxCallable function = (LoxCallable) callee;
-        
+
         if (arguments.size() != function.arity()) {
             throw new RuntimeError(expr.paren,
                     "Expected " + function.arity() + " arguments but got " + arguments.size() + ".");
         }
         return function.call(this, arguments);
-        
+
     }
-    
+
     /**
      * 1. Evaluate the object.<br>
-     * 2. Raise a runtime error if it’s not an instance of a class.<br>
+     * 2. Raise a runtime error if itï¿½s not an instance of a class.<br>
      * 3. Evaluate the value.<br>
-     * 
+     *
      * @throws RuntimeError
      *             if object not a LoxInstance
      */
@@ -219,40 +219,40 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         }
         throw new RuntimeError(expr.name, "Only instance have properties.");
     }
-    
+
     @Override
     public Object visitSetExpr(Set expr) throws RuntimeError {
         Object object = evaluate(expr.object);
-        
+
         if (! (object instanceof LoxInstance)) {
             throw new RuntimeError(expr.name, "Only instances have fields.");
         }
         Object value = evaluate(expr.value);
-        
+
         ((LoxInstance) object).set(expr.name, value);
-        
+
         return value;
     }
-    
+
     @Override
     public Object visitSuperExpr(Super expr) {
         int distance = locals.get(expr);
         LoxClass superclass = (LoxClass) environment.getAt(distance, "super");
-        
+
         //this always refers to this instance, even if we are in a superclass
         //"this" is always one level nearer than "super"'s environment
         LoxInstance object = (LoxInstance) environment.getAt(distance -1, "this");
-        
+
         LoxFunction method = superclass.findMethod(expr.method.lexeme);
         if (method == null) {
             throw new RuntimeError(expr.method, "Undefined property '" + expr.method.lexeme + "'.");
         }
         return method.bind(object);
     }
-    
-    @Override                                    
+
+    @Override
     public Object visitThisExpr(Expr.This expr) {
-      return lookUpVariable(expr.keyword, expr); 
+        return lookUpVariable(expr.keyword, expr);
     }
     private void checkNumberOperand(Token operator, Object operand) {
         if (!(operand instanceof Double)) {
@@ -332,44 +332,44 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         executeBlock(stmt.statements, new Environment(environment));
         return null;
     }
-    
+
     @Override
     public Void visitClassStmt(Class stmt) throws RuntimeError {
         Object superclass = null;
-        
+
         if (stmt.superclass != null) {
             superclass = evaluate(stmt.superclass);
             if (!(superclass instanceof LoxClass)) {
                 throw new RuntimeError(stmt.superclass.name, "superclass must be a class.");
             }
         }
-        
+
         environment.define(stmt.name.lexeme, null);
-        
+
         if (stmt.superclass != null) {
             environment = new Environment(environment);
             environment.define("super", superclass);
         }
-        
+
         Map<String, LoxFunction> methods = new HashMap<>();
         for (Stmt.Function method: stmt.methods) {
             LoxFunction function = new LoxFunction(method, environment, LoxClass.isInitializer(method));
             methods.put(method.name.lexeme, function);
         }
-        
+
         LoxClass klass = new LoxClass(stmt.name.lexeme, (LoxClass) superclass, methods);
-        
+
         if(superclass != null) {
             environment = environment.enclosing;
         }
         environment.assign(stmt.name, klass);
-        
-        
+
+
         return null;
-    } 
-    
+    }
+
     protected void executeBlock(List<Stmt> statements, Environment environment) {
-       final Environment previous = this.environment;
+        final Environment previous = this.environment;
         try {
             this.environment = environment;
             for (Stmt statement: statements) {
@@ -388,7 +388,7 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         } else if (stmt.elseBranch != null) {
             execute(stmt.elseBranch);
         }
-        
+
         return null;
     }
     @Override
@@ -396,33 +396,33 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         while(isTruthy(evaluate(stmt.condition))) {
             try {
                 execute(stmt.body);
-            } catch (ContinuePropogator e) {
+            } catch (ContinuePropagator e) {
                 //continue
-            } catch (BreakPropogator e) {
+            } catch (BreakPropagator e) {
                 break;
             }
         }
         return null;
     }
-    
+
     @Override
-    public Void visitForStmt(For stmt) {        
+    public Void visitForStmt(For stmt) {
         while(isTruthy(evaluate(stmt.condition))) {
             try {
                 execute(stmt.body);
-            } catch (ContinuePropogator e) {
+            } catch (ContinuePropagator e) {
                 //continue
-            } catch (BreakPropogator e) {
+            } catch (BreakPropagator e) {
                 break;
             }
             if (stmt.increment != null) {
                 execute(stmt.increment);
             }
-            
+
         }
         return null;
     }
-    
+
     @Override
     public Void visitFunctionStmt(Function stmt) {
         LoxFunction function = new LoxFunction(stmt, environment);
@@ -435,20 +435,20 @@ public class Interpreter implements Expr.Visitor<Object>, Stmt.Visitor<Void>{
         if (stmt.value != null) {
             value = evaluate(stmt.value);
         }
-        throw new Propogator.ReturnPropogator(value);
+        throw new Propagator.ReturnPropagator(value);
     }
     @Override
     public Void visitBreakStmt(Break stmt) {
-        throw new Propogator.BreakPropogator();
+        throw new BreakPropagator();
     }
     @Override
     public Void visitContinueStmt(Continue stmt) {
-        throw new Propogator.ContinuePropogator();
+        throw new ContinuePropagator();
     }
-    
+
     void resolve(Expr expr, int depth) {
-        locals.put(expr, depth);          
-      }
+        locals.put(expr, depth);
+    }
 
 
 

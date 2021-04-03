@@ -158,7 +158,7 @@ class Parser {
             value = expression();
         }
         consume(SEMICOLON, "Expect ';' after return value.");
-        return new Stmt.Return(keyword, value);
+        return Stmt.Return.of(keyword, value);
     }
     private Stmt forStatementFinish() {
         //since we have a 'continue' statement, this can no longer be just 'syntactic sugar'
@@ -402,7 +402,7 @@ class Parser {
     }
     /**
      * arguments → expression ( "," expression )* ;
-     * @param expr
+     * @param callee
      * @return
      */
     private Expr finishCall(Expr callee) {
