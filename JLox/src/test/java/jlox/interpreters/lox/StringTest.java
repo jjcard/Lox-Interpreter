@@ -1,9 +1,10 @@
 package jlox.interpreters.lox;
 
-import static jlox.interpreters.lox.LoxTestUtil.assertLinesEquals;
+import org.junit.jupiter.api.Test;
+
 import java.io.IOException;
 
-import org.junit.jupiter.api.Test;
+import static jlox.interpreters.lox.LoxTestUtil.assertLinesEquals;
 
 class StringTest extends BaseLoxTest {
     

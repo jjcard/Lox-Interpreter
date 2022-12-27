@@ -3,7 +3,7 @@ package jlox.interpreters.tool;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -48,7 +48,7 @@ public class GenerateAst {
     }
     private static void defineAst(final String outputDir, final String baseName, String...types) throws IOException {
         
-        PrintWriter writer = new PrintWriter(new File(outputDir, baseName + ".java"), StandardCharsets.UTF_8.name());
+        PrintWriter writer = new PrintWriter(new File(outputDir, baseName + ".java"), Charset.defaultCharset());
         
         writer.println("package jlox.interpreters.lox;");
         writer.println();
@@ -91,10 +91,9 @@ public class GenerateAst {
         if (fieldList.trim().isEmpty()) {
             fields = new String[0];
         } else {
-          fields = fieldList.split(", ");  
+            fields = fieldList.split(", ");
         }
-        
-        
+
         
         writer.println("  static class " + className + " extends " + baseName + " {");
         

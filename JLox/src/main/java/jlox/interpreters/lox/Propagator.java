@@ -1,6 +1,5 @@
 package jlox.interpreters.lox;
 
-@SuppressWarnings("serial")
 public abstract class Propagator extends RuntimeException {
 
     public Propagator() {

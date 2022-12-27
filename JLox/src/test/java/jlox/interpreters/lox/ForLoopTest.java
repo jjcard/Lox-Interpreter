@@ -11,10 +11,10 @@ class ForLoopTest extends BaseLoxTest {
 
     @Test
     void forLoopTest_full() {
-        final String loxCode = ""
-                + "for (var i = 0; i<=4; i = i+1){\r\n" + 
-                "    print i;\r\n" + 
-                "}";
+        final String loxCode = """
+                for (var i = 0; i<=4; i = i+1){\r
+                    print i;\r
+                }""";
         
         Lox.run(loxCode);
         
@@ -24,15 +24,16 @@ class ForLoopTest extends BaseLoxTest {
     
     @Test
     void forLoopTest_continueBreak() {
-        final String loxCode = "for (var i = 0; i<=10; i = i+1){\r\n" + 
-                "    if (i == 4 or i == 6){\r\n" + 
-                "        continue;\r\n" + 
-                "    }\r\n" + 
-                "    if (i == 8){\r\n" + 
-                "        break;\r\n" + 
-                "    }\r\n" + 
-                "    print i;\r\n" + 
-                "}";
+        final String loxCode = """
+                for (var i = 0; i<=10; i = i+1){\r
+                    if (i == 4 or i == 6){\r
+                        continue;\r
+                    }\r
+                    if (i == 8){\r
+                        break;\r
+                    }\r
+                    print i;\r
+                }""";
         
         Lox.run(loxCode);
         

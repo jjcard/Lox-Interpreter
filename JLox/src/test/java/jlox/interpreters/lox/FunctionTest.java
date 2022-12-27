@@ -6,10 +6,11 @@ class FunctionTest extends BaseLoxTest {
 
     @Test
     public void multiArgumentFunctionTest() {
-        final String loxCode = "fun add(a, b, c) {\r\n" + 
-                "  print a + b + c;\r\n" + 
-                "}\r\n" + 
-                "add(1,4,2);";
+        final String loxCode = """
+                fun add(a, b, c) {\r
+                  print a + b + c;\r
+                }\r
+                add(1,4,2);""";
         
         Lox.run(loxCode);
         LoxTestUtil.assertHasNoErrors();
@@ -18,12 +19,13 @@ class FunctionTest extends BaseLoxTest {
 
     @Test
     public void functionCalledWithTooManyArguments() {
-        final String loxCode = "fun oneArg(one){\r\n" + 
-                "    print one;\r\n" + 
-                "}\r\n" + 
-                "var a = \"one\";\r\n" + 
-                "var b = \"two\";\r\n" + 
-                "oneArg(a,b);";
+        final String loxCode = """
+                fun oneArg(one){\r
+                    print one;\r
+                }\r
+                var a = "one";\r
+                var b = "two";\r
+                oneArg(a,b);""";
         Lox.run(loxCode);
         LoxTestUtil.assertRuntimeError("Expected 1 arguments but got 2.", 6);
     }

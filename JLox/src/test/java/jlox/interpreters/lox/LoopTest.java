@@ -8,12 +8,12 @@ public class LoopTest extends BaseLoxTest {
 
     @Test
     public void whileloopTest() {
-        final String loxCode = ""
-                + "var i = 0;\r\n"
-                + "while (i<=4){\r\n"
-                + "    print i;\r\n" 
-                + "    i = i+1;\r\n" 
-                +"}";
+        final String loxCode = """
+                var i = 0;\r
+                while (i<=4){\r
+                    print i;\r
+                    i = i+1;\r
+                }""";
         
         Lox.run(loxCode);
         
@@ -22,14 +22,15 @@ public class LoopTest extends BaseLoxTest {
     }
     @Test
     public void whileloopTest_break() {
-        final String loxCode = "var i = 0;\r\n" + 
-                "while (i <=4){\r\n" + 
-                "    if (i == 3){\r\n" + 
-                "        break;\r\n" + 
-                "    }\r\n" + 
-                "    print i;\r\n" +
-                "    i = i+1;\r\n" + 
-                "}";
+        final String loxCode = """
+                var i = 0;\r
+                while (i <=4){\r
+                    if (i == 3){\r
+                        break;\r
+                    }\r
+                    print i;\r
+                    i = i+1;\r
+                }""";
         Lox.run(loxCode);
         
         LoxTestUtil.assertHasNoErrors();
@@ -38,17 +39,18 @@ public class LoopTest extends BaseLoxTest {
 
     
     @Test
-    public void breakStatmentOutsideLoop() {
+    public void breakStatementOutsideLoop() {
         final String loxCode = "var a = \"yes\";\r\n" + 
                 "break;";
         Lox.run(loxCode);
         LoxTestUtil.assertErrorMessageEquals("Break statement must be inside a loop.", 2, " at 'break'");
     }
     @Test
-    public void continueStatmentOutsideLoop() {
-        final String loxCode = "var a = \"yes\";\r\n" + 
-                "var b = a;\r\n" + 
-                "continue;";
+    public void continueStatementOutsideLoop() {
+        final String loxCode = """
+                var a = "yes";\r
+                var b = a;\r
+                continue;""";
         Lox.run(loxCode);
         LoxTestUtil.assertErrorMessageEquals("Continue statement must be inside a loop.", 3, " at 'continue'");
     }

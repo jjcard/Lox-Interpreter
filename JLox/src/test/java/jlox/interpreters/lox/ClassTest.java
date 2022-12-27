@@ -12,13 +12,14 @@ class ClassTest extends BaseLoxTest {
     private static final String CLASS_TEST_FILE_DIR = TEST_FILE_DIR + "class/";
     @Test
     void functionTest() {
-        String loxCode = "class DevonshireCream {\r\n" + 
-                "  serveOn() {\r\n" + 
-                "    return \"Scones\";\r\n" + 
-                "  }\r\n" + 
-                "}\r\n" + 
-                "\r\n" + 
-                "print DevonshireCream;";
+        String loxCode = """
+                class DevonshireCream {\r
+                  serveOn() {\r
+                    return "Scones";\r
+                  }\r
+                }\r
+                \r
+                print DevonshireCream;""";
         
         
         Lox.run(loxCode);
@@ -31,9 +32,10 @@ class ClassTest extends BaseLoxTest {
     
     @Test
     public void classToStringTest() {
-        String loxCode = "class Bagel {}\r\n" + 
-                "var bagel = Bagel();\r\n" + 
-                "print bagel;";
+        String loxCode = """
+                class Bagel {}\r
+                var bagel = Bagel();\r
+                print bagel;""";
         Lox.run(loxCode);
         
         LoxTestUtil.assertHasNoErrors();
@@ -43,13 +45,15 @@ class ClassTest extends BaseLoxTest {
 
     @Test
     public void initTest() {
-        String loxCode = "class Foo {\r\n" + 
-                "  init() {\r\n" + 
-                "    print this;\r\n" + 
-                "  }\r\n" + 
-                "}\r\n" + 
-                "\r\n" + 
-                "var foo = Foo();\r\n";
+        String loxCode = """
+                class Foo {\r
+                  init() {\r
+                    print this;\r
+                  }\r
+                }\r
+                \r
+                var foo = Foo();\r
+                """;
         Lox.run(loxCode);
         
         LoxTestUtil.assertHasNoErrors();
@@ -58,14 +62,15 @@ class ClassTest extends BaseLoxTest {
     
     @Test
     public void initTest2() {
-        String loxCode = "class Foo {\r\n" + 
-                "  init() {\r\n" + 
-                "    print this;\r\n" + 
-                "  }\r\n" + 
-                "}\r\n" + 
-                "\r\n" + 
-                "var foo = Foo();\r\n" + 
-                "print foo.init();";
+        String loxCode = """
+                class Foo {\r
+                  init() {\r
+                    print this;\r
+                  }\r
+                }\r
+                \r
+                var foo = Foo();\r
+                print foo.init();""";
         Lox.run(loxCode);
         
         LoxTestUtil.assertHasNoErrors();
@@ -75,13 +80,14 @@ class ClassTest extends BaseLoxTest {
     @Disabled("test for static methods, if implemented")
     @Test
     public void staticMethodTest() {
-        String loxCode = "class Math {\r\n" + 
-                "  class square(n) {\r\n" + 
-                "    return n * n;\r\n" + 
-                "  }\r\n" + 
-                "}\r\n" + 
-                "\r\n" + 
-                "print Math.square(3);.";
+        String loxCode = """
+                class Math {\r
+                  class square(n) {\r
+                    return n * n;\r
+                  }\r
+                }\r
+                \r
+                print Math.square(3);.""";
         
         Lox.run(loxCode);
         LoxTestUtil.assertHasNoErrors();

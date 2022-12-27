@@ -20,12 +20,13 @@ class CommentTest extends BaseLoxTest {
 
     @Test
     void blockCommentTest() {
-        Lox.run("/**\r\n" + 
-                "fdsablal\r\n" + 
-                "//inside comment\r\n" + 
-                "print \"hello\";\r\n" + 
-                "*/\r\n" + 
-                "print \"World\";");
+        Lox.run("""
+                /**\r
+                fdsablal\r
+                //inside comment\r
+                print "hello";\r
+                */\r
+                print "World";""");
         
         LoxTestUtil.assertHasNoErrors();
         

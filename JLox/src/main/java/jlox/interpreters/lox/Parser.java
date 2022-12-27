@@ -14,7 +14,6 @@ class Parser {
     private static final int MAX_ARGS_SIZE = 8;
 
     /** Sentinel Exception*/
-    @SuppressWarnings("serial")
     private static class ParseError extends RuntimeException{}
     private final List<Token> tokens;
     private int current = 0;
@@ -299,9 +298,8 @@ class Parser {
             if (expr instanceof Expr.Variable) {
                 Token name = ((Expr.Variable) expr).name;
                 return Expr.Assign.of(name, value);
-            } else if (expr instanceof Expr.Get) {
+            } else if (expr instanceof Get get) {
                 //assignment with Get syntax means it's really a Expr.Set
-                Expr.Get get = (Get) expr;
                 return Expr.Set.of(get.object, get.name, value);
             }
             error(equals, "Invalid assignment target.");
@@ -350,7 +348,6 @@ class Parser {
     }
     /**
      * multiplication → unary ( ( "/" | "*" ) unary )* ;
-     * @return
      */
     private Expr multiplication() {
         return buildAssociativeeftBinaryExpression(this::unary, SLASH, STAR);
@@ -368,7 +365,6 @@ class Parser {
     }
     /**
      * unary → ( "!" | "-" ) unary | call ;
-     * @return
      */
     private Expr unary() {
         if (match(BANG, MINUS)) {
@@ -383,7 +379,6 @@ class Parser {
     /**
      * call → primary ( "(" arguments? ")" | "." IDENTIFIER )* ;
      * arguments → expression ( "," expression )* ;
-     * @return
      */
     private Expr call() {
         Expr expr = primary();
@@ -403,7 +398,6 @@ class Parser {
     /**
      * arguments → expression ( "," expression )* ;
      * @param callee
-     * @return
      */
     private Expr finishCall(Expr callee) {
         List<Expr> arguments = new ArrayList<>();
@@ -422,7 +416,6 @@ class Parser {
      * primary → "true" | "false" | "nil" | "this"
         | NUMBER | STRING | IDENTIFIER | "(" expression ")"
         | "super" "." IDENTIFIER ;
-     * @return
      */
     private Expr primary() {
         if (match(FALSE)) {
@@ -476,23 +469,19 @@ class Parser {
     private void synchronize() {                 
         advance();
 
-        while (!isAtEnd()) {                       
-          if (previous().type == SEMICOLON) return;
+        while (!isAtEnd()) {
+          if (previous().type == SEMICOLON) {
+              return;
+          }
 
             switch (peek().type) {
-                case CLASS:
-                case FUN:
-                case VAR:
-                case FOR:
-                case IF:
-                case WHILE:
-                case PRINT:
-                case RETURN:
+                case CLASS, FUN, VAR, FOR, IF, WHILE, PRINT, RETURN -> {
                     return;
-            }                                     
+                }
+            }
 
-          advance();                               
-        }                                          
+          advance();
+        }
       }
 
     private boolean match(TokenType... types) {

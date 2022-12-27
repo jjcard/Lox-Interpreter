@@ -1,10 +1,9 @@
 package jlox.interpreters.lox;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.PrintStream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LoxTestUtil {
     private static final String NEW_LINE = System.getProperty("line.separator");
